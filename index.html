@@ -1,0 +1,2448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>MAXERIA</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html,
+body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#080706;
+    color:#f4eee5;
+    font-family:Arial,Helvetica,sans-serif;
+    overscroll-behavior:none;
+}
+
+button{
+    font:inherit;
+}
+
+/* =====================================================
+   GLOBAL BACKGROUND
+===================================================== */
+
+.global-bg{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+    background:#080706;
+}
+
+.global-bg-image{
+    position:absolute;
+    inset:-4%;
+    background-image:url("resimler/maxeria-bg.png");
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+    transform:scale(1.04);
+    animation:maxeriaCamera 24s ease-in-out infinite alternate;
+    will-change:transform;
+}
+
+.global-bg-shade{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        180deg,
+        rgba(0,0,0,.18) 0%,
+        rgba(0,0,0,.08) 35%,
+        rgba(0,0,0,.24) 100%
+    );
+    pointer-events:none;
+}
+
+.global-light{
+    position:absolute;
+    width:35%;
+    height:160%;
+    top:-30%;
+    left:-50%;
+    background:linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255,220,165,0) 15%,
+        rgba(255,220,165,.10) 50%,
+        rgba(255,220,165,0) 85%,
+        transparent 100%
+    );
+    transform:rotate(10deg);
+    filter:blur(28px);
+    animation:maxeriaLight 18s linear infinite;
+    pointer-events:none;
+}
+
+.global-glow{
+    position:absolute;
+    left:-15%;
+    right:-15%;
+    bottom:-20%;
+    height:50%;
+    background:radial-gradient(
+        ellipse at center,
+        rgba(217,155,91,.10) 0%,
+        rgba(170,105,62,.035) 40%,
+        transparent 70%
+    );
+    filter:blur(30px);
+    animation:maxeriaGlow 12s ease-in-out infinite alternate;
+    pointer-events:none;
+}
+
+.global-petal{
+    position:absolute;
+    width:17px;
+    height:11px;
+    top:-10%;
+    border-radius:75% 25% 70% 30%;
+    background:radial-gradient(
+        circle at 35% 30%,
+        #f1b4bc 0%,
+        #bd6875 55%,
+        #713a43 100%
+    );
+    opacity:.55;
+    animation:petalFall 20s linear infinite;
+    pointer-events:none;
+}
+
+.global-petal.p1{
+    left:7%;
+    animation-delay:-4s;
+    animation-duration:22s;
+}
+
+.global-petal.p2{
+    left:24%;
+    animation-delay:-14s;
+    animation-duration:27s;
+    width:13px;
+    height:9px;
+}
+
+.global-petal.p3{
+    left:63%;
+    animation-delay:-9s;
+    animation-duration:24s;
+}
+
+.global-petal.p4{
+    left:86%;
+    animation-delay:-18s;
+    animation-duration:29s;
+    width:14px;
+    height:9px;
+}
+
+.global-petal.p5{
+    left:46%;
+    animation-delay:-22s;
+    animation-duration:31s;
+    width:11px;
+    height:7px;
+    opacity:.40;
+}
+
+.global-vignette{
+    position:absolute;
+    inset:0;
+    background:radial-gradient(
+        ellipse at center,
+        transparent 42%,
+        rgba(0,0,0,.08) 68%,
+        rgba(0,0,0,.40) 100%
+    );
+    pointer-events:none;
+}
+
+@keyframes maxeriaCamera{
+    0%{
+        transform:scale(1.04) translate3d(-.5%,0,0);
+    }
+    50%{
+        transform:scale(1.075) translate3d(.6%,-.5%,0);
+    }
+    100%{
+        transform:scale(1.055) translate3d(-.3%,.4%,0);
+    }
+}
+
+@keyframes maxeriaLight{
+    0%{
+        left:-55%;
+        opacity:0;
+    }
+    12%{
+        opacity:.6;
+    }
+    75%{
+        opacity:.35;
+    }
+    100%{
+        left:125%;
+        opacity:0;
+    }
+}
+
+@keyframes maxeriaGlow{
+    from{
+        transform:translateX(-3%) scaleX(.96);
+        opacity:.35;
+    }
+    to{
+        transform:translateX(3%) scaleX(1.05);
+        opacity:.75;
+    }
+}
+
+@keyframes petalFall{
+    0%{
+        transform:translate3d(0,-12vh,0) rotate(0deg);
+        opacity:0;
+    }
+    8%{
+        opacity:.55;
+    }
+    30%{
+        transform:translate3d(3vw,30vh,0) rotate(110deg);
+    }
+    55%{
+        transform:translate3d(-2vw,58vh,0) rotate(210deg);
+    }
+    80%{
+        transform:translate3d(4vw,85vh,0) rotate(310deg);
+    }
+    100%{
+        transform:translate3d(-1vw,112vh,0) rotate(420deg);
+        opacity:0;
+    }
+}
+
+/* =====================================================
+   SCREENS
+===================================================== */
+
+#app{
+    width:100%;
+    height:100%;
+}
+
+.screen{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    height:100%;
+}
+
+.scroll-area{
+    width:100%;
+    height:100%;
+    overflow-y:auto;
+    overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+    scrollbar-width:none;
+    padding:70px 70px 90px;
+}
+
+.scroll-area::-webkit-scrollbar{
+    display:none;
+    width:0;
+    height:0;
+}
+
+/* =====================================================
+   HOME
+===================================================== */
+
+.home-screen{
+    align-items:center;
+    justify-content:center;
+    padding:55px 60px;
+}
+
+.home-inner{
+    width:min(1250px,94%);
+    margin:auto;
+    text-align:center;
+}
+
+.brand-small{
+    color:#dabe8e;
+    font-size:13px;
+    letter-spacing:5px;
+    margin-bottom:14px;
+}
+
+.logo{
+    font-family:Georgia,serif;
+    font-size:64px;
+    letter-spacing:8px;
+    color:#f5eee3;
+}
+
+.tagline{
+    margin-top:13px;
+    font-size:13px;
+    letter-spacing:5px;
+    color:rgba(255,255,255,.68);
+}
+
+.category-grid{
+    margin-top:58px;
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:18px;
+}
+
+/* =====================================================
+   PREMIUM HOME CARDS
+===================================================== */
+
+.category-card{
+    position:relative;
+    height:245px;
+    overflow:hidden;
+    cursor:pointer;
+    border:1px solid rgba(224,190,132,.62);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(16,13,11,.77) 0%,
+            rgba(10,8,7,.61) 58%,
+            rgba(5,5,4,.48) 100%
+        );
+
+    box-shadow:
+        0 16px 35px rgba(0,0,0,.28);
+
+    transition:
+        transform .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease;
+}
+
+.category-card:hover{
+    border-color:rgba(239,205,148,.92);
+    box-shadow:
+        0 18px 40px rgba(0,0,0,.34),
+        0 0 18px rgba(218,174,104,.08);
+}
+
+.category-card:active{
+    transform:scale(.985);
+}
+
+.category-card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:2;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255,222,169,.05),
+            transparent 26%,
+            transparent 75%,
+            rgba(255,222,169,.025)
+        );
+}
+
+.card-corner{
+    position:absolute;
+    width:30px;
+    height:30px;
+    pointer-events:none;
+    z-index:8;
+}
+
+.card-corner.tl{
+    top:-1px;
+    left:-1px;
+    border-top:3px solid #e2bb7a;
+    border-left:3px solid #e2bb7a;
+}
+
+.card-corner.tr{
+    top:-1px;
+    right:-1px;
+    border-top:3px solid #e2bb7a;
+    border-right:3px solid #e2bb7a;
+}
+
+.card-corner.bl{
+    bottom:-1px;
+    left:-1px;
+    border-bottom:3px solid #e2bb7a;
+    border-left:3px solid #e2bb7a;
+}
+
+.card-corner.br{
+    bottom:-1px;
+    right:-1px;
+    border-bottom:3px solid #e2bb7a;
+    border-right:3px solid #e2bb7a;
+}
+
+.category-number{
+    position:absolute;
+    top:21px;
+    left:24px;
+    z-index:10;
+
+    color:rgba(240,214,173,.80);
+    font-size:12px;
+    letter-spacing:3px;
+}
+
+.category-number::after{
+    content:"";
+    display:inline-block;
+    width:28px;
+    height:1px;
+    margin-left:9px;
+    margin-bottom:3px;
+    background:rgba(226,187,122,.48);
+}
+
+.category-art-zone{
+    position:absolute;
+    top:0;
+    right:0;
+    width:50%;
+    height:100%;
+    overflow:hidden;
+    z-index:3;
+    pointer-events:none;
+}
+
+.category-art-zone::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:1;
+    background:linear-gradient(
+        90deg,
+        rgba(8,7,6,.80) 0%,
+        rgba(8,7,6,.36) 25%,
+        rgba(8,7,6,0) 55%
+    );
+    pointer-events:none;
+}
+
+.category-art-img{
+    position:absolute;
+    z-index:0;
+
+    right:-4%;
+    top:0;
+
+    width:112%;
+    height:100%;
+
+    object-fit:cover;
+    object-position:center;
+
+    opacity:.72;
+
+    pointer-events:none;
+    user-select:none;
+}
+
+.category-card.womens .category-art-img{
+    right:-8%;
+    width:118%;
+}
+
+.category-card.color .category-art-img{
+    right:-8%;
+    width:120%;
+}
+
+.category-card.mens .category-art-img{
+    right:-7%;
+    width:116%;
+}
+
+.category-card.manicure .category-art-img{
+    right:-6%;
+    width:116%;
+}
+
+.category-card.pedicure .category-art-img{
+    right:-4%;
+    width:113%;
+}
+
+.category-content{
+    position:absolute;
+    left:0;
+    bottom:0;
+
+    width:59%;
+
+    z-index:9;
+
+    padding:
+        0
+        14px
+        24px
+        25px;
+
+    text-align:left;
+}
+
+.category-title{
+    font-family:Georgia,serif;
+    font-size:28px;
+    line-height:1.04;
+    color:#fff7eb;
+    font-weight:normal;
+
+    text-shadow:
+        0 3px 14px rgba(0,0,0,.82);
+}
+
+.category-divider{
+    width:38px;
+    height:2px;
+    margin-top:10px;
+
+    background:linear-gradient(
+        90deg,
+        #edc77f 0%,
+        rgba(237,199,127,.18) 100%
+    );
+
+    box-shadow:
+        0 0 7px rgba(237,199,127,.30);
+}
+
+.category-sub{
+    margin-top:10px;
+    color:#e0bd84;
+    font-size:9.5px;
+    letter-spacing:1.65px;
+    line-height:1.45;
+}
+
+.category-micro{
+    margin-top:7px;
+    color:rgba(255,255,255,.48);
+    font-size:7px;
+    letter-spacing:1.20px;
+    line-height:1.45;
+}
+
+.category-arrow{
+    position:absolute;
+    left:24px;
+    bottom:18px;
+
+    width:34px;
+    height:34px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    z-index:10;
+
+    border:1px solid rgba(231,193,129,.75);
+    border-radius:50%;
+
+    background:rgba(8,7,6,.44);
+
+    color:#f1d39e;
+
+    font-family:Georgia,serif;
+    font-size:21px;
+
+    box-shadow:
+        0 0 8px rgba(229,188,120,.10);
+}
+
+.category-content.with-arrow{
+    padding-bottom:67px;
+}
+
+/* =====================================================
+   SUBCATEGORY CARDS
+===================================================== */
+
+.subcategory-card{
+    position:relative;
+    overflow:hidden;
+    cursor:pointer;
+    border:1px solid rgba(218,190,142,.42);
+    background:rgba(12,10,9,.48);
+    backdrop-filter:blur(2px);
+    -webkit-backdrop-filter:blur(2px);
+    box-shadow:0 10px 28px rgba(0,0,0,.18);
+    transition:border-color .25s ease,transform .25s ease;
+}
+
+.subcategory-card:hover{
+    border-color:rgba(218,190,142,.68);
+}
+
+.subcategory-card:active{
+    transform:scale(.98);
+}
+
+.subcategory-number{
+    position:absolute;
+    left:22px;
+    top:20px;
+    color:rgba(218,190,142,.55);
+    font-size:13px;
+    letter-spacing:2px;
+}
+
+.subcategory-content{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:28px;
+    text-align:left;
+}
+
+.subcategory-title{
+    font-family:Georgia,serif;
+    font-size:27px;
+    color:#fff7eb;
+}
+
+.subcategory-sub{
+    margin-top:10px;
+    color:#dabe8e;
+    font-size:11px;
+    letter-spacing:2px;
+    line-height:1.5;
+}
+
+/* =====================================================
+   TOPBAR
+===================================================== */
+
+.topbar{
+    width:min(1250px,90%);
+    margin:0 auto 55px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.top-brand{
+    font-family:Georgia,serif;
+    font-size:24px;
+    letter-spacing:5px;
+}
+
+.back-btn{
+    min-width:120px;
+    padding:12px 18px;
+    color:#f4eee5;
+    background:rgba(12,10,9,.45);
+    border:1px solid rgba(218,190,142,.35);
+    cursor:pointer;
+}
+
+.category-heading{
+    width:min(1250px,90%);
+    margin:0 auto 38px;
+}
+
+.eyebrow{
+    color:#dabe8e;
+    letter-spacing:4px;
+    font-size:11px;
+    margin-bottom:12px;
+}
+
+.category-heading h1{
+    font-family:Georgia,serif;
+    font-size:50px;
+    font-weight:normal;
+}
+
+.category-heading p{
+    margin-top:10px;
+    color:rgba(255,255,255,.55);
+    font-size:11px;
+    letter-spacing:4px;
+}
+
+/* =====================================================
+   SUBCATEGORY
+===================================================== */
+
+.subcategory-grid{
+    width:min(1250px,90%);
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:18px;
+}
+
+.subcategory-card{
+    min-height:210px;
+}
+
+/* =====================================================
+   PRODUCT GRID
+===================================================== */
+
+.product-grid{
+    width:min(1250px,90%);
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    grid-auto-rows:max-content;
+    gap:18px;
+    align-items:start;
+}
+
+.product-card{
+    width:100%;
+    aspect-ratio:1 / 1;
+    min-width:0;
+    min-height:0;
+    position:relative;
+    overflow:hidden;
+    cursor:pointer;
+    border:1px solid rgba(218,190,142,.30);
+    background:rgba(10,9,8,.58);
+}
+
+.product-image{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.product-overlay{
+    position:absolute;
+    inset:auto 0 0;
+    min-height:42%;
+    padding:50px 20px 20px;
+    background:linear-gradient(
+        transparent,
+        rgba(0,0,0,.86)
+    );
+}
+
+.product-no{
+    font-size:10px;
+    color:#dabe8e;
+    letter-spacing:2px;
+}
+
+.product-name{
+    margin-top:6px;
+    font-family:Georgia,serif;
+    font-size:22px;
+}
+
+.product-price{
+    margin-top:8px;
+    color:#dabe8e;
+    font-size:15px;
+}
+
+/* =====================================================
+   DETAIL
+===================================================== */
+
+.detail-scroll{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.detail-wrapper{
+    width:min(1250px,90%);
+    min-height:80vh;
+    display:grid;
+    grid-template-columns:1.35fr .65fr;
+    border:1px solid rgba(218,190,142,.25);
+    background:rgba(14,12,10,.76);
+    backdrop-filter:blur(5px);
+    -webkit-backdrop-filter:blur(5px);
+    box-shadow:0 20px 55px rgba(0,0,0,.30);
+}
+
+.detail-photo-area{
+    position:relative;
+    overflow:hidden;
+    background:rgba(7,6,5,.75);
+}
+
+.detail-photo{
+    width:100%;
+    height:100%;
+    min-height:620px;
+    object-fit:contain;
+    display:block;
+}
+
+.photo-counter{
+    position:absolute;
+    right:18px;
+    bottom:18px;
+    padding:8px 12px;
+    background:rgba(0,0,0,.65);
+    font-size:12px;
+}
+
+.photo-arrow{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:52px;
+    height:70px;
+    border:1px solid rgba(218,190,142,.35);
+    background:rgba(0,0,0,.42);
+    color:#fff;
+    font-size:38px;
+    cursor:pointer;
+}
+
+.photo-arrow.left{
+    left:15px;
+}
+
+.photo-arrow.right{
+    right:15px;
+}
+
+.detail-info{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:55px 40px;
+    border-left:1px solid rgba(218,190,142,.16);
+}
+
+.detail-category{
+    color:#dabe8e;
+    font-size:11px;
+    letter-spacing:3px;
+}
+
+.detail-name{
+    margin-top:14px;
+    font-family:Georgia,serif;
+    font-size:40px;
+    line-height:1.1;
+}
+
+.detail-price{
+    margin-top:20px;
+    color:#dabe8e;
+    font-size:25px;
+}
+
+.detail-description{
+    margin-top:25px;
+    color:rgba(255,255,255,.70);
+    font-size:15px;
+    line-height:1.7;
+}
+
+.detail-buttons{
+    display:flex;
+    gap:10px;
+    margin-top:35px;
+}
+
+.detail-btn{
+    flex:1;
+    padding:15px;
+    border:1px solid rgba(218,190,142,.38);
+    background:transparent;
+    color:#fff;
+    cursor:pointer;
+}
+
+.detail-btn.primary{
+    background:#dabe8e;
+    color:#17120d;
+}
+
+/* =====================================================
+   PORTRAIT
+===================================================== */
+
+@media (orientation:portrait){
+
+    .global-bg-image{
+        inset:-3%;
+        background-position:center center;
+    }
+
+    .home-screen{
+        padding:60px 45px;
+    }
+
+    .scroll-area{
+        padding:70px 45px 100px;
+    }
+
+    .logo{
+        font-size:52px;
+    }
+
+    .category-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:16px;
+        margin-top:50px;
+    }
+
+    .category-card{
+        height:220px;
+    }
+
+    .category-content{
+        width:60%;
+        padding-left:21px;
+        padding-right:10px;
+    }
+
+    .category-title{
+        font-size:22px;
+    }
+
+    .category-sub{
+        font-size:8px;
+        letter-spacing:1.1px;
+    }
+
+    .category-micro{
+        font-size:6px;
+        letter-spacing:.90px;
+    }
+
+    .category-art-zone{
+        width:53%;
+    }
+
+    .category-art-img{
+        width:116%;
+        right:-8%;
+        opacity:.72;
+    }
+
+    .category-card.color .category-art-img{
+        width:124%;
+        right:-10%;
+    }
+
+    .category-number{
+        top:17px;
+        left:20px;
+        font-size:10px;
+    }
+
+    .category-arrow{
+        left:20px;
+        bottom:15px;
+        width:30px;
+        height:30px;
+        font-size:19px;
+    }
+
+    .category-content.with-arrow{
+        padding-bottom:58px;
+    }
+
+    .subcategory-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:16px;
+    }
+
+    .subcategory-card{
+        min-height:210px;
+    }
+
+    .subcategory-title{
+        font-size:25px;
+    }
+
+    .product-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        grid-auto-rows:max-content;
+    }
+
+    .product-card{
+        aspect-ratio:1 / 1;
+    }
+
+    .detail-wrapper{
+        grid-template-columns:1fr;
+        grid-template-rows:auto auto;
+        min-height:auto;
+    }
+
+    .detail-photo{
+        min-height:0;
+        height:auto;
+        max-height:58vh;
+    }
+
+    .detail-info{
+        border-left:none;
+        border-top:1px solid rgba(218,190,142,.16);
+        padding:35px 25px;
+    }
+
+    .detail-description{
+        margin-top:15px;
+        line-height:1.5;
+    }
+
+    .detail-buttons{
+        margin-top:20px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="app"></div>
+
+<script>
+
+/* =====================================================
+   DATA
+===================================================== */
+
+const menu = {
+
+    braids:{
+        title:"BRAIDS",
+        subtitle:"BRAID COLLECTION",
+
+        products:[
+
+            {
+                name:"Box Braids",
+                description:"Classic and modern Box Braids styling.",
+                photos:[
+                    {src:"resimler/box-braids/01.jpg",name:"Box Braids",price:"€ 45"},
+                    {src:"resimler/box-braids/02.jpg",name:"Box Braids",price:"€ 75"},
+                    {src:"resimler/box-braids/03.jpg",name:"Box Braids",price:"€ 40"},
+                    {src:"resimler/box-braids/04.jpg",name:"Box Braids",price:"€ 45"}
+                ]
+            },
+
+            {
+                name:"Half Box",
+                description:"Modern Half Box Braids styling.",
+                photos:[
+                    {src:"resimler/half-box/01.jpg",name:"Half Box",price:"€ 30"},
+                    {src:"resimler/half-box/02.jpg",name:"Half Box",price:"€ 30"}
+                ]
+            },
+
+            {
+                name:"Full Box",
+                description:"Bold and detailed Full Box Braids.",
+                photos:[
+                    {src:"resimler/full-box/01.jpg",name:"Full Box",price:"€ 150"},
+                    {src:"resimler/full-box/02.jpg",name:"Full Box",price:"€ 150"},
+                    {src:"resimler/full-box/03.jpg",name:"Full Box Basic Type",price:"€ 100"},
+                    {src:"resimler/full-box/04.jpg",name:"Full Box",price:"€ 150"}
+                ]
+            },
+
+            {
+                name:"Single Braids",
+                description:"Individual braid designs.",
+                photos:[
+                    {src:"resimler/single-braids/01.jpg",name:"Double Braids",price:"€ 25"},
+                    {src:"resimler/single-braids/02.jpg",name:"Double Braids",price:"€ 25"},
+                    {src:"resimler/single-braids/03.jpg",name:"DreadLocks",price:"€ 20"},
+                    {src:"resimler/single-braids/04.jpg",name:"Single Braids",price:"€ 15"},
+                    {src:"resimler/single-braids/05.jpg",name:"Single Braids",price:"€ 15"},
+                    {src:"resimler/single-braids/06.jpg",name:"Double Braids",price:"€ 25"}
+                ]
+            },
+
+            {
+                name:"Halfbraid",
+                description:"Contemporary Halfbraid styling.",
+                photos:[
+                    {src:"resimler/halfbraid/01.jpg",name:"Halfbraid",price:"€ 45"},
+                    {src:"resimler/halfbraid/02.jpg",name:"Halfbraid",price:"€ 35"},
+                    {src:"resimler/halfbraid/03.jpg",name:"Halfbraid",price:"€ 45"},
+                    {src:"resimler/halfbraid/04.jpg",name:"Halfbraid",price:"€ 45"}
+                ]
+            },
+
+            {
+                name:"Afro",
+                description:"Natural and voluminous Afro styling.",
+                photos:[
+                    {src:"resimler/afro/01.jpg",name:"Afro",price:"€ 60"},
+                    {src:"resimler/afro/02.jpg",name:"Afro",price:"€ 75"}
+                ]
+            },
+
+            {
+                name:"Colored Braids",
+                description:"Creative and colorful braid designs.",
+                photos:[
+                    {src:"resimler/colored-braids/01.jpg",name:"Colored Braids",price:"€ 75"},
+                    {src:"resimler/colored-braids/02.jpg",name:"Colored Braids",price:"€ 90"}
+                ]
+            }
+
+        ]
+    },
+
+    womensHair:{
+        title:"WOMEN'S HAIR",
+        subtitle:"CUT • CARE • STYLE",
+
+        products:[
+
+            {
+                name:"Hair Cut",
+                description:"Professional haircut designed for your face shape and hair type.",
+                photos:[
+                    {src:"resimler/hair-cut/01.jpg",name:"Hair Cut",price:"€ 20"},
+                    {src:"resimler/hair-cut/02.jpg",name:"Bob Cut",price:"€ 20"},
+                    {src:"resimler/hair-cut/03.jpg",name:"Layer Cut",price:"€ 20"},
+                    {src:"resimler/hair-cut/04.jpg",name:"Layer Cut",price:"€ 20"},
+                    {src:"resimler/hair-cut/05.jpg",name:"Blunt Cut",price:"€ 20"}
+                ]
+            },
+
+            {
+                name:"Hair Care",
+                description:"Professional care treatments for healthier looking hair.",
+                photos:[
+                    {src:"resimler/hair-care/01.jpg",name:"Ceratine Care",price:"€ 80"},
+                    {src:"resimler/hair-care/02.jpg",name:"Wash and Spa",price:"€ 5"},
+                    {src:"resimler/hair-care/03.jpg",name:"Hair Mask",price:"€ 10"}
+                ]
+            },
+
+            {
+                name:"Hair Styling",
+                description:"Professional styling for everyday and special occasions.",
+                photos:[
+                    {src:"resimler/hair-styling/01.jpg",name:"Wave",price:"€ 15"},
+                    {src:"resimler/hair-styling/02.jpg",name:"Curly",price:"€ 20"}
+                ]
+            },
+
+            {
+                name:"Blow Dry",
+                description:"Professional blow dry and styling.",
+                photos:[
+                    {src:"resimler/blow-dry/01.jpg",name:"Blow Dry",price:"€ 15"}
+                ]
+            }
+
+        ]
+    },
+
+    mensHair:{
+        title:"MEN'S HAIR",
+        subtitle:"CUT • CARE • BEARD",
+
+        products:[
+
+            {
+                name:"Hair Cut",
+                description:"Modern men's haircut and styling.",
+                photos:[
+                    {src:"resimler/mens-hair/01.jpg",name:"Baby Mullet",price:"€ 20"},
+                    {src:"resimler/mens-hair/02.jpg",name:"Pompadour Cut",price:"€ 20"},
+                    {src:"resimler/mens-hair/03.jpg",name:"Buzz Cut",price:"€ 20"},
+                    {src:"resimler/mens-hair/04.jpg",name:"Taper Fade",price:"€ 20"},
+                    {src:"resimler/mens-hair/05.jpg",name:"Skin Fade",price:"€ 20"}
+                ]
+            },
+
+            {
+                name:"Men's Care",
+                description:"Deep cleansing and refreshing care for healthier-looking skin.",
+                photos:[
+                    {src:"resimler/mens-care/01.jpg",name:"Face Mask",price:"€ 10"},
+                    {src:"resimler/mens-care/02.jpg",name:"Wax",price:"€ 5"}
+                ]
+            },
+
+            {
+                name:"Beard",
+                description:"Professional beard trimming, shaping and care.",
+                photos:[
+                    {src:"resimler/beard/01.jpg",name:"Stubble",price:"€ 10"},
+                    {src:"resimler/beard/02.jpg",name:"Short Boxed",price:"€ 10"},
+                    {src:"resimler/beard/03.jpg",name:"Ducktail",price:"€ 15"},
+                    {src:"resimler/beard/04.jpg",name:"BeardStache",price:"€ 15"}
+                ]
+            }
+
+        ]
+    },
+
+    manicure:{
+        title:"MANICURE",
+        subtitle:"NAIL • CARE • BEAUTY",
+
+        products:[
+
+            {
+                name:"Classic Manicure",
+                description:"Professional hand and nail care.",
+                photos:[
+                    {src:"resimler/manicure/01.jpg",name:"Classic Manicure",price:"€ 20"}
+                ]
+            },
+
+            {
+                name:"Shellac",
+                description:"Long-lasting professional gel polish.",
+                photos:[
+                    {src:"resimler/gel-polish/01.jpg",name:"Shellac",price:"€ 15"}
+                ]
+            }
+
+        ]
+    },
+
+    pedicure:{
+        title:"PEDICURE",
+        subtitle:"FOOT • CARE • BEAUTY",
+
+        products:[
+
+            {
+                name:"Classic Pedicure",
+                description:"Relaxing and comprehensive spa pedicure.",
+                photos:[
+                    {src:"resimler/pedicure/01.jpg",name:"Spa Pedicure",price:"€ 25"}
+                ]
+            },
+
+            {
+                name:"Shellac",
+                description:"Long-lasting professional gel polish.",
+                photos:[
+                    {src:"resimler/spa-pedicure/01.jpg",name:"Shellac",price:"€ 15"}
+                ]
+            }
+
+        ]
+    }
+};
+
+
+/* =====================================================
+   HAIR COLOR SPECIAL STRUCTURE
+===================================================== */
+
+const hairColor = {
+
+    title:"HAIR COLOR",
+    subtitle:"COLOR • BLONDE • BALAYAGE",
+
+    sections:[
+
+        {
+            name:"OUR WORK",
+            type:"gallery",
+            description:"Real color work created at MAXERIA.",
+            photos:[
+                {src:"resimler/our-work/01.jpg",name:"MAXERIA Color",price:""},
+                {src:"resimler/our-work/02.jpg",name:"MAXERIA Color",price:""},
+                {src:"resimler/our-work/03.jpg",name:"MAXERIA Color",price:""},
+                {src:"resimler/our-work/04.jpg",name:"MAXERIA Color",price:""},
+                {src:"resimler/our-work/05.jpg",name:"MAXERIA Color",price:""},
+                {src:"resimler/our-work/06.jpg",name:"MAXERIA Color",price:""},
+                {src:"resimler/our-work/07.jpg",name:"MAXERIA Color",price:""},
+                {src:"resimler/our-work/08.jpg",name:"MAXERIA Color",price:""},
+                {src:"resimler/our-work/09.jpg",name:"MAXERIA Color",price:""},
+                {src:"resimler/our-work/10.jpg",name:"MAXERIA Color",price:""},
+                {src:"resimler/our-work/11.jpg",name:"MAXERIA Color",price:""}
+            ]
+        },
+
+        {
+            name:"COLOR COLLECTION",
+            type:"collection",
+
+            groups:[
+
+                {
+                    name:"BLONDE",
+                    description:"Blonde color reference collection.",
+                    photos:[
+                        {src:"resimler/color-collection/blonde/01.jpg",name:"Platinum Blonde",price:""},
+                        {src:"resimler/color-collection/blonde/02.jpg",name:"Ice Blonde",price:""},
+                        {src:"resimler/color-collection/blonde/03.jpg",name:"Ash Blonde",price:""},
+                        {src:"resimler/color-collection/blonde/04.jpg",name:"Pearl Blonde",price:""},
+                        {src:"resimler/color-collection/blonde/05.jpg",name:"Beige Blonde",price:""},
+                        {src:"resimler/color-collection/blonde/06.jpg",name:"Honey Blonde",price:""}
+                    ]
+                },
+
+                {
+                    name:"BRUNETTE",
+                    description:"Brunette color reference collection.",
+                    photos:[
+                        {src:"resimler/color-collection/brunette/01.jpg",name:"Chocolate Brown",price:""},
+                        {src:"resimler/color-collection/brunette/02.jpg",name:"Mocha Brown",price:""},
+                        {src:"resimler/color-collection/brunette/03.jpg",name:"Ash Brown",price:""},
+                        {src:"resimler/color-collection/brunette/04.jpg",name:"Caramel Brown",price:""}
+                    ]
+                },
+
+                {
+                    name:"COPPER",
+                    description:"Copper color reference collection.",
+                    photos:[
+                        {src:"resimler/color-collection/copper/01.jpg",name:"Natural Copper",price:""},
+                        {src:"resimler/color-collection/copper/02.jpg",name:"Golden Copper",price:""},
+                        {src:"resimler/color-collection/copper/03.jpg",name:"Deep Copper",price:""}
+                    ]
+                },
+
+                {
+                    name:"RED",
+                    description:"Red color reference collection.",
+                    photos:[
+                        {src:"resimler/color-collection/red/01.jpg",name:"Cherry Red",price:""},
+                        {src:"resimler/color-collection/red/02.jpg",name:"Burgundy",price:""},
+                        {src:"resimler/color-collection/red/03.jpg",name:"Deep Red",price:""}
+                    ]
+                },
+
+                {
+                    name:"BLACK & DARK",
+                    description:"Dark hair color reference collection.",
+                    photos:[
+                        {src:"resimler/color-collection/black-dark/01.jpg",name:"Natural Black",price:""},
+                        {src:"resimler/color-collection/black-dark/02.jpg",name:"Blue Black",price:""},
+                        {src:"resimler/color-collection/black-dark/03.jpg",name:"Dark Chocolate",price:""}
+                    ]
+                },
+
+                {
+                    name:"FASHION COLORS",
+                    description:"Creative fashion color reference collection.",
+                    photos:[
+                        {src:"resimler/color-collection/fashion-colors/01.jpg",name:"Pink",price:""},
+                        {src:"resimler/color-collection/fashion-colors/02.jpg",name:"Purple",price:""},
+                        {src:"resimler/color-collection/fashion-colors/03.jpg",name:"Blue",price:""}
+                    ]
+                }
+
+            ]
+        },
+
+        {
+            name:"ROOT COLOR",
+            type:"gallery",
+            description:"Professional root color application.",
+            photos:[
+                {src:"resimler/root-color/01.jpg",name:"Root Color Natural",price:"€ 40"},
+                {src:"resimler/root-color/02.jpg",name:"Root Color Blonde",price:"€ 80"}
+            ]
+        },
+
+        {
+            name:"OMBRE",
+            type:"gallery",
+            description:"Modern ombre with soft color transitions.",
+            photos:[
+                {src:"resimler/ombre/01.jpg",name:"Ombre",price:"€ 150"}
+            ]
+        },
+
+        {
+            name:"BALAYAGE",
+            type:"gallery",
+            description:"Natural-looking balayage with dimensional highlights.",
+            photos:[
+                {src:"resimler/balayage/01.jpg",name:"Balayage",price:"€ 100"}
+            ]
+        },
+
+        {
+            name:"HIGHLIGHTS",
+            type:"gallery",
+            description:"Fine and precise highlight application.",
+            photos:[
+                {src:"resimler/highlights/01.jpg",name:"Highlights",price:"€ 180"},
+                {src:"resimler/highlights/02.jpg",name:"Highlights",price:"€ 140"}
+            ]
+        }
+
+    ]
+};
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+const app = document.getElementById("app");
+
+let currentCategory = null;
+let currentProduct = null;
+let currentPhoto = 0;
+
+let currentColorSection = null;
+let currentColorGroup = null;
+
+
+/* =====================================================
+   BACKGROUND
+===================================================== */
+
+function backgroundHTML(){
+
+    return `
+        <div class="global-bg">
+
+            <div class="global-bg-image"></div>
+
+            <div class="global-bg-shade"></div>
+
+            <div class="global-light"></div>
+
+            <div class="global-glow"></div>
+
+            <span class="global-petal p1"></span>
+            <span class="global-petal p2"></span>
+            <span class="global-petal p3"></span>
+            <span class="global-petal p4"></span>
+            <span class="global-petal p5"></span>
+
+            <div class="global-vignette"></div>
+
+        </div>
+    `;
+}
+
+
+/* =====================================================
+   HOME
+===================================================== */
+
+function home(){
+
+    currentCategory = null;
+    currentProduct = null;
+    currentPhoto = 0;
+
+    currentColorSection = null;
+    currentColorGroup = null;
+
+    app.innerHTML = `
+
+        ${backgroundHTML()}
+
+        <section class="screen home-screen">
+
+            <div class="home-inner">
+
+                <div class="brand-small">
+                    HAIR • BEAUTY • BRAIDS
+                </div>
+
+                <div class="logo">
+                    MAXERIA
+                </div>
+
+                <div class="tagline">
+                    SELECT YOUR EXPERIENCE
+                </div>
+
+                <div class="category-grid">
+
+                    ${categoryCard(
+                        "01",
+                        "BRAIDS",
+                        "braids",
+                        "BRAID COLLECTION",
+                        "CULTURE • STYLE • YOU",
+                        "resimler/menu-art/braids.png",
+                        "braids"
+                    )}
+
+                    ${categoryCard(
+                        "02",
+                        "WOMEN'S HAIR",
+                        "womensHair",
+                        "CUT • CARE • STYLE",
+                        "BEAUTY IN EVERY DETAIL",
+                        "resimler/menu-art/womens-hair.png",
+                        "womens"
+                    )}
+
+                    ${categoryCard(
+                        "03",
+                        "HAIR COLOR",
+                        "hairColor",
+                        "COLOR • BLONDE • BALAYAGE",
+                        "EXPRESS YOUR TONE",
+                        "resimler/menu-art/hair-color.png",
+                        "color",
+                        true
+                    )}
+
+                    ${categoryCard(
+                        "04",
+                        "MEN'S HAIR",
+                        "mensHair",
+                        "CUT • CARE • BEARD",
+                        "MODERN • SHARP • CONFIDENT",
+                        "resimler/menu-art/mens-hair.png",
+                        "mens"
+                    )}
+
+                    ${categoryCard(
+                        "05",
+                        "MANICURE",
+                        "manicure",
+                        "NAIL • BEAUTY",
+                        "SMALL DETAILS • BIG IMPACT",
+                        "resimler/menu-art/manicure.png",
+                        "manicure"
+                    )}
+
+                    ${categoryCard(
+                        "06",
+                        "PEDICURE",
+                        "pedicure",
+                        "FOOT • BEAUTY",
+                        "CARE AT EVERY STEP",
+                        "resimler/menu-art/pedicure.png",
+                        "pedicure"
+                    )}
+
+                </div>
+
+            </div>
+
+        </section>
+    `;
+}
+
+
+function categoryCard(
+    number,
+    title,
+    key,
+    sub,
+    micro,
+    image,
+    cardClass,
+    specialHairColor = false
+){
+
+    const clickAction =
+        specialHairColor
+        ? "showHairColor()"
+        : `showCategory('${key}')`;
+
+    return `
+
+        <div class="category-card ${cardClass}"
+             onclick="${clickAction}">
+
+            <span class="card-corner tl"></span>
+            <span class="card-corner tr"></span>
+            <span class="card-corner bl"></span>
+            <span class="card-corner br"></span>
+
+            <div class="category-number">
+                ${number}
+            </div>
+
+            <div class="category-art-zone">
+
+                <img
+                    class="category-art-img"
+                    src="${image}"
+                    alt=""
+                    draggable="false"
+                    onerror="this.style.display='none'"
+                >
+
+            </div>
+
+            <div class="category-content with-arrow">
+
+                <div class="category-title">
+                    ${title}
+                </div>
+
+                <div class="category-divider"></div>
+
+                <div class="category-sub">
+                    ${sub}
+                </div>
+
+                <div class="category-micro">
+                    ${micro}
+                </div>
+
+            </div>
+
+            <div class="category-arrow">
+                ›
+            </div>
+
+        </div>
+    `;
+}
+
+
+/* =====================================================
+   STANDARD CATEGORY
+===================================================== */
+
+function showCategory(categoryKey){
+
+    currentCategory = categoryKey;
+    currentProduct = null;
+    currentPhoto = 0;
+
+    const category = menu[categoryKey];
+
+    let cards = "";
+
+    category.products.forEach((product,index)=>{
+
+        cards += `
+
+            <div class="subcategory-card"
+                 onclick="showSubcategory(${index})">
+
+                <div class="subcategory-number">
+
+                    ${String(index + 1).padStart(2,"0")}
+
+                </div>
+
+                <div class="subcategory-content">
+
+                    <div class="subcategory-title">
+                        ${product.name}
+                    </div>
+
+                    <div class="subcategory-sub">
+
+                        ${product.photos.length}
+                        STYLE${product.photos.length > 1 ? "S" : ""}
+
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+    });
+
+    app.innerHTML = `
+
+        ${backgroundHTML()}
+
+        <section class="screen">
+
+            <div class="scroll-area">
+
+                <div class="topbar">
+
+                    <button class="back-btn"
+                            onclick="home()">
+
+                        ← MAIN MENU
+
+                    </button>
+
+                    <div class="top-brand">
+                        MAXERIA
+                    </div>
+
+                    <div style="width:120px;"></div>
+
+                </div>
+
+                <div class="category-heading">
+
+                    <div class="eyebrow">
+                        ${category.subtitle}
+                    </div>
+
+                    <h1>
+                        ${category.title}
+                    </h1>
+
+                    <p>
+                        SELECT CATEGORY
+                    </p>
+
+                </div>
+
+                <div class="subcategory-grid">
+                    ${cards}
+                </div>
+
+            </div>
+
+        </section>
+    `;
+}
+
+
+/* =====================================================
+   STANDARD SUBCATEGORY
+===================================================== */
+
+function showSubcategory(productIndex){
+
+    currentProduct = productIndex;
+    currentPhoto = 0;
+
+    const category = menu[currentCategory];
+    const product = category.products[productIndex];
+
+    renderPhotoGrid(
+        category.title,
+        product.name,
+        product.photos,
+        `showDetail`,
+        `showCategory('${currentCategory}')`
+    );
+}
+
+
+/* =====================================================
+   STANDARD DETAIL
+===================================================== */
+
+function showDetail(photoIndex){
+
+    currentPhoto = photoIndex;
+
+    const category = menu[currentCategory];
+    const product = category.products[currentProduct];
+
+    renderDetail(
+        category.title,
+        product.photos,
+        currentPhoto,
+        product.description,
+        `showSubcategory(${currentProduct})`,
+        "standard"
+    );
+}
+
+
+/* =====================================================
+   HAIR COLOR MAIN
+===================================================== */
+
+function showHairColor(){
+
+    currentColorSection = null;
+    currentColorGroup = null;
+    currentPhoto = 0;
+
+    let cards = "";
+
+    hairColor.sections.forEach((section,index)=>{
+
+        let subtitle = "";
+
+        if(section.type === "collection"){
+            subtitle =
+                `${section.groups.length} COLOR GROUPS`;
+        }else{
+            subtitle =
+                `${section.photos.length} STYLE${section.photos.length > 1 ? "S" : ""}`;
+        }
+
+        cards += `
+
+            <div class="subcategory-card"
+                 onclick="openHairColorSection(${index})">
+
+                <div class="subcategory-number">
+
+                    ${String(index + 1).padStart(2,"0")}
+
+                </div>
+
+                <div class="subcategory-content">
+
+                    <div class="subcategory-title">
+                        ${section.name}
+                    </div>
+
+                    <div class="subcategory-sub">
+                        ${subtitle}
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+    });
+
+    app.innerHTML = `
+
+        ${backgroundHTML()}
+
+        <section class="screen">
+
+            <div class="scroll-area">
+
+                <div class="topbar">
+
+                    <button class="back-btn"
+                            onclick="home()">
+
+                        ← MAIN MENU
+
+                    </button>
+
+                    <div class="top-brand">
+                        MAXERIA
+                    </div>
+
+                    <div style="width:120px;"></div>
+
+                </div>
+
+                <div class="category-heading">
+
+                    <div class="eyebrow">
+                        ${hairColor.subtitle}
+                    </div>
+
+                    <h1>
+                        ${hairColor.title}
+                    </h1>
+
+                    <p>
+                        SELECT CATEGORY
+                    </p>
+
+                </div>
+
+                <div class="subcategory-grid">
+
+                    ${cards}
+
+                </div>
+
+            </div>
+
+        </section>
+    `;
+}
+
+
+/* =====================================================
+   HAIR COLOR SECTION
+===================================================== */
+
+function openHairColorSection(sectionIndex){
+
+    currentColorSection = sectionIndex;
+    currentColorGroup = null;
+    currentPhoto = 0;
+
+    const section =
+        hairColor.sections[sectionIndex];
+
+    if(section.type === "collection"){
+
+        showColorCollection();
+
+    }else{
+
+        showHairColorGallery();
+
+    }
+}
+
+
+/* =====================================================
+   COLOR COLLECTION
+===================================================== */
+
+function showColorCollection(){
+
+    const section =
+        hairColor.sections[currentColorSection];
+
+    let cards = "";
+
+    section.groups.forEach((group,index)=>{
+
+        cards += `
+
+            <div class="subcategory-card"
+                 onclick="showColorGroup(${index})">
+
+                <div class="subcategory-number">
+
+                    ${String(index + 1).padStart(2,"0")}
+
+                </div>
+
+                <div class="subcategory-content">
+
+                    <div class="subcategory-title">
+                        ${group.name}
+                    </div>
+
+                    <div class="subcategory-sub">
+
+                        ${group.photos.length}
+                        COLORS
+
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+    });
+
+    app.innerHTML = `
+
+        ${backgroundHTML()}
+
+        <section class="screen">
+
+            <div class="scroll-area">
+
+                <div class="topbar">
+
+                    <button class="back-btn"
+                            onclick="showHairColor()">
+
+                        ← BACK
+
+                    </button>
+
+                    <div class="top-brand">
+                        MAXERIA
+                    </div>
+
+                    <button class="back-btn"
+                            onclick="home()">
+
+                        MAIN MENU
+
+                    </button>
+
+                </div>
+
+                <div class="category-heading">
+
+                    <div class="eyebrow">
+                        HAIR COLOR
+                    </div>
+
+                    <h1>
+                        COLOR COLLECTION
+                    </h1>
+
+                    <p>
+                        SELECT COLOR FAMILY
+                    </p>
+
+                </div>
+
+                <div class="subcategory-grid">
+
+                    ${cards}
+
+                </div>
+
+            </div>
+
+        </section>
+    `;
+}
+
+
+/* =====================================================
+   COLOR GROUP
+===================================================== */
+
+function showColorGroup(groupIndex){
+
+    currentColorGroup = groupIndex;
+    currentPhoto = 0;
+
+    const section =
+        hairColor.sections[currentColorSection];
+
+    const group =
+        section.groups[groupIndex];
+
+    renderPhotoGrid(
+        "COLOR COLLECTION",
+        group.name,
+        group.photos,
+        "showColorDetail",
+        "showColorCollection()"
+    );
+}
+
+
+/* =====================================================
+   HAIR COLOR NORMAL GALLERY
+===================================================== */
+
+function showHairColorGallery(){
+
+    const section =
+        hairColor.sections[currentColorSection];
+
+    renderPhotoGrid(
+        "HAIR COLOR",
+        section.name,
+        section.photos,
+        "showHairColorDetail",
+        "showHairColor()"
+    );
+}
+
+
+/* =====================================================
+   COMMON PHOTO GRID
+===================================================== */
+
+function renderPhotoGrid(
+    eyebrow,
+    title,
+    photos,
+    clickFunction,
+    backFunction
+){
+
+    let cards = "";
+
+    photos.forEach((photo,index)=>{
+
+        cards += `
+
+            <div class="product-card"
+                 onclick="${clickFunction}(${index})">
+
+                <img class="product-image"
+                     src="${photo.src}"
+                     onerror="this.style.display='none'">
+
+                <div class="product-overlay">
+
+                    <div class="product-no">
+
+                        ${String(index + 1).padStart(2,"0")}
+
+                    </div>
+
+                    <div class="product-name">
+                        ${photo.name}
+                    </div>
+
+                    ${
+                        photo.price
+                        ? `<div class="product-price">${photo.price}</div>`
+                        : ""
+                    }
+
+                </div>
+
+            </div>
+        `;
+    });
+
+    app.innerHTML = `
+
+        ${backgroundHTML()}
+
+        <section class="screen">
+
+            <div class="scroll-area">
+
+                <div class="topbar">
+
+                    <button class="back-btn"
+                            onclick="${backFunction}">
+
+                        ← BACK
+
+                    </button>
+
+                    <div class="top-brand">
+                        MAXERIA
+                    </div>
+
+                    <button class="back-btn"
+                            onclick="home()">
+
+                        MAIN MENU
+
+                    </button>
+
+                </div>
+
+                <div class="category-heading">
+
+                    <div class="eyebrow">
+                        ${eyebrow}
+                    </div>
+
+                    <h1>
+                        ${title}
+                    </h1>
+
+                    <p>
+                        SELECT YOUR STYLE
+                    </p>
+
+                </div>
+
+                <div class="product-grid">
+
+                    ${cards}
+
+                </div>
+
+            </div>
+
+        </section>
+    `;
+}
+
+
+/* =====================================================
+   HAIR COLOR DETAILS
+===================================================== */
+
+function showHairColorDetail(photoIndex){
+
+    currentPhoto = photoIndex;
+
+    const section =
+        hairColor.sections[currentColorSection];
+
+    renderDetail(
+        "HAIR COLOR",
+        section.photos,
+        currentPhoto,
+        section.description,
+        "showHairColorGallery()",
+        "hairColor"
+    );
+}
+
+
+function showColorDetail(photoIndex){
+
+    currentPhoto = photoIndex;
+
+    const section =
+        hairColor.sections[currentColorSection];
+
+    const group =
+        section.groups[currentColorGroup];
+
+    renderDetail(
+        "COLOR COLLECTION",
+        group.photos,
+        currentPhoto,
+        group.description,
+        `showColorGroup(${currentColorGroup})`,
+        "colorCollection"
+    );
+}
+
+
+/* =====================================================
+   COMMON DETAIL
+===================================================== */
+
+function renderDetail(
+    categoryTitle,
+    photos,
+    photoIndex,
+    description,
+    backFunction,
+    mode
+){
+
+    const photo =
+        photos[photoIndex];
+
+    app.innerHTML = `
+
+        ${backgroundHTML()}
+
+        <section class="screen">
+
+            <div class="scroll-area detail-scroll">
+
+                <div class="detail-wrapper">
+
+                    <div class="detail-photo-area">
+
+                        <img class="detail-photo"
+                             src="${photo.src}"
+                             onerror="this.style.opacity='0'">
+
+                        <div class="photo-counter">
+
+                            ${photoIndex + 1}
+                            /
+                            ${photos.length}
+
+                        </div>
+
+                        ${
+                            photos.length > 1
+                            ? `
+                                <button class="photo-arrow left"
+                                        onclick="previousCurrentPhoto('${mode}')">
+
+                                    ‹
+
+                                </button>
+
+                                <button class="photo-arrow right"
+                                        onclick="nextCurrentPhoto('${mode}')">
+
+                                    ›
+
+                                </button>
+                              `
+                            : ""
+                        }
+
+                    </div>
+
+                    <div class="detail-info">
+
+                        <div class="detail-category">
+                            ${categoryTitle}
+                        </div>
+
+                        <div class="detail-name">
+                            ${photo.name}
+                        </div>
+
+                        ${
+                            photo.price
+                            ? `
+                                <div class="detail-price">
+                                    ${photo.price}
+                                </div>
+                              `
+                            : ""
+                        }
+
+                        <div class="detail-description">
+                            ${description}
+                        </div>
+
+                        <div class="detail-buttons">
+
+                            <button class="detail-btn"
+                                    onclick="${backFunction}">
+
+                                ← BACK
+
+                            </button>
+
+                            <button class="detail-btn primary"
+                                    onclick="home()">
+
+                                MAIN MENU
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+    `;
+}
+
+
+/* =====================================================
+   DETAIL PHOTO NAVIGATION
+===================================================== */
+
+function getCurrentPhotos(mode){
+
+    if(mode === "standard"){
+
+        return menu[currentCategory]
+            .products[currentProduct]
+            .photos;
+    }
+
+    if(mode === "hairColor"){
+
+        return hairColor
+            .sections[currentColorSection]
+            .photos;
+    }
+
+    if(mode === "colorCollection"){
+
+        return hairColor
+            .sections[currentColorSection]
+            .groups[currentColorGroup]
+            .photos;
+    }
+
+    return [];
+}
+
+
+function nextCurrentPhoto(mode){
+
+    const photos =
+        getCurrentPhotos(mode);
+
+    currentPhoto++;
+
+    if(currentPhoto >= photos.length){
+        currentPhoto = 0;
+    }
+
+    reopenDetail(mode);
+}
+
+
+function previousCurrentPhoto(mode){
+
+    const photos =
+        getCurrentPhotos(mode);
+
+    currentPhoto--;
+
+    if(currentPhoto < 0){
+        currentPhoto = photos.length - 1;
+    }
+
+    reopenDetail(mode);
+}
+
+
+function reopenDetail(mode){
+
+    if(mode === "standard"){
+
+        showDetail(currentPhoto);
+
+    }else if(mode === "hairColor"){
+
+        showHairColorDetail(currentPhoto);
+
+    }else if(mode === "colorCollection"){
+
+        showColorDetail(currentPhoto);
+
+    }
+}
+
+
+/* =====================================================
+   30 SECOND INACTIVITY
+===================================================== */
+
+let inactivityTimer;
+
+function resetInactivityTimer(){
+
+    clearTimeout(inactivityTimer);
+
+    inactivityTimer = setTimeout(()=>{
+
+        home();
+
+    },30000);
+}
+
+
+[
+    "click",
+    "touchstart",
+    "pointerdown",
+    "mousemove",
+    "wheel",
+    "scroll"
+].forEach(event=>{
+
+    document.addEventListener(
+        event,
+        resetInactivityTimer,
+        {
+            passive:true,
+            capture:true
+        }
+    );
+
+});
+
+
+/* =====================================================
+   START
+===================================================== */
+
+home();
+resetInactivityTimer();
+
+</script>
+
+</body>
+</html>
